@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-import profileImage from '/images/shiba.jpg'
 import { motion } from 'framer-motion'
 import emailjs from '@emailjs/browser'
 import Project from './components/project.tsx'
