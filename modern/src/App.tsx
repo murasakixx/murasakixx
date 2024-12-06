@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react'
-import profileImage from '/images/me.png'
+import React, { useState, useRef, useEffect } from 'react'
+import profileImage from '/images/shiba.jpg'
 import { motion } from 'framer-motion'
 import emailjs from '@emailjs/browser'
+import Project from './components/project.tsx'
 
 const App = () => {
   const formRef = useRef<HTMLFormElement>(null)
@@ -11,6 +12,12 @@ const App = () => {
     email: '',
     message: ''
   })
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    // Initialize EmailJS with your public key
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY)
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -24,29 +31,36 @@ const App = () => {
     e.preventDefault()
     if (!formRef.current) return
 
+    // Validate environment variables
+    if (!import.meta.env.VITE_EMAILJS_SERVICE_ID ||
+        !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
+        !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+      console.error('Missing EmailJS configuration')
+      setFormStatus('error')
+      return
+    }
+
     try {
       setFormStatus('sending')
       
-      await emailjs.sendForm(
+      const result = await emailjs.sendForm(
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        formRef.current,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        formRef.current
       )
 
+      console.log('Success:', result)
       setFormStatus('sent')
       setFormData({ name: '', email: '', message: '' })
       
-      // Reset form status after 3 seconds
       setTimeout(() => {
         setFormStatus('idle')
       }, 3000)
 
     } catch (error) {
-      console.error('Error sending email:', error)
+      console.error('Detailed error:', error)
       setFormStatus('error')
       
-      // Reset error status after 3 seconds
       setTimeout(() => {
         setFormStatus('idle')
       }, 3000)
@@ -69,19 +83,60 @@ const App = () => {
         className="fixed w-full p-4 backdrop-blur-sm bg-black/70 z-50"
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Thummarat</h1>
+          <h1 className="text-2xl font-bold">Murasakix</h1>
           <div className="hidden md:flex space-x-8">
             <a href="#about" className="text-sm hover:text-gray-300 transition-colors">About</a>
             <a href="#projects" className="text-sm hover:text-gray-300 transition-colors">Projects</a>
             <a href="#contact" className="text-sm hover:text-gray-300 transition-colors">Contact</a>
           </div>
           {/* Mobile menu button */}
-          <button className="md:hidden">
+          <button 
+            className="md:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} 
+              />
             </svg>
           </button>
         </div>
+
+        {/* Mobile menu dropdown */}
+        <motion.div
+          initial={false}
+          animate={{ height: isMobileMenuOpen ? 'auto' : 0, opacity: isMobileMenuOpen ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="md:hidden overflow-hidden bg-black/95"
+        >
+          <div className="px-4 py-3 space-y-3">
+            <a 
+              href="#about" 
+              className="block text-sm hover:text-gray-300 transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              About
+            </a>
+            <a 
+              href="#projects" 
+              className="block text-sm hover:text-gray-300 transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Projects
+            </a>
+            <a 
+              href="#contact" 
+              className="block text-sm hover:text-gray-300 transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Contact
+            </a>
+          </div>
+        </motion.div>
       </motion.nav>
 
       {/* Hero Section */}
@@ -102,7 +157,7 @@ const App = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light"
           >
-            A passionate developer crafting beautiful digital experiences
+            A developer crafting beautiful digital experiences
           </motion.p>
           <motion.button 
             variants={fadeInUp}
@@ -128,7 +183,7 @@ const App = () => {
           className="max-w-7xl mx-auto"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center">About Me</h2>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-1 gap-12 items-center">
             <motion.div 
               initial={{ x: -50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
@@ -137,7 +192,7 @@ const App = () => {
               className="space-y-6"
             >
               <p className="text-lg text-gray-300 leading-relaxed">
-                I'm a passionate developer with expertise in creating modern web applications. 
+                I'm a developer with expertise in creating modern web applications. 
                 My journey in technology started with a curiosity about how things work, 
                 and it has evolved into a professional career building digital solutions.
               </p>
@@ -152,7 +207,7 @@ const App = () => {
                 </div>
               </div>
             </motion.div>
-            <motion.div 
+            {/* <motion.div 
               initial={{ x: 50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -168,9 +223,14 @@ const App = () => {
                 />
                 <div className="absolute inset-0 ring-1 ring-white/10 rounded-2xl"></div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </motion.div>
+      </section>
+
+      {/* Projects Section */}
+      <section>
+        <Project />
       </section>
 
       {/* Contact Section */}
