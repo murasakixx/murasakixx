@@ -28,11 +28,11 @@ const Project: React.FC = () => {
         image: "/images/kruma.png"
     },{
         id: 3,
-        title: "bruh bruh bruh",
-        description: "bruhhhhhh",
-        tags: ["bruh"],
+        title: "Discord Bot",
+        description: "Discord bot for manage server",
+        tags: ["Node.js", "JavaScript"],
         link: "",
-        image: ""
+        image: "/images/discord.jpg"
     }
     // Add more projects as needed
   ];
