@@ -14,7 +14,6 @@ const App = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    // Initialize EmailJS with your public key
     emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY)
   }, [])
 
@@ -30,7 +29,6 @@ const App = () => {
     e.preventDefault()
     if (!formRef.current) return
 
-    // Validate environment variables
     if (!import.meta.env.VITE_EMAILJS_SERVICE_ID ||
         !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
         !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
@@ -145,6 +143,7 @@ const App = () => {
             variants={fadeInUp}
             initial="initial"
             animate="animate"
+            transition={{ duration: 1.5 }}
             className="text-6xl md:text-8xl font-bold tracking-tight"
           >
             Hi, I'm <span className="text-blue-500">Thummarat</span>
@@ -177,7 +176,7 @@ const App = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 1.5 }}
           viewport={{ once: true }}
           className="max-w-7xl mx-auto"
         >
@@ -237,7 +236,7 @@ const App = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 1.5 }}
           viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center"
         >
